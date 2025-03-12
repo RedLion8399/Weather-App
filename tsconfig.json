@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "None",
+    "target": "ES6",
+    "outDir": "./script",
+    "rootDir": "./script",
+    "strict": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": ["script/**/*.ts"],
+  "exclude": ["node_modules", "secrets.json"]
+}
