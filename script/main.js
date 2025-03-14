@@ -13,6 +13,7 @@ let locationKey;
 const weatherDisplay = document.getElementById("weather-display");
 const locationDisplay = document.getElementById("location-display");
 const cityInput = document.getElementById("city-input");
+// Get API Keys
 function loadApiKey() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -32,6 +33,7 @@ function loadApiKey() {
         }
     });
 }
+// Get and process Weather Data
 function displayWeather(weatherData) {
     weatherDisplay.innerHTML = weatherData;
 }
@@ -61,19 +63,6 @@ function buildWeatherRequestUrl() {
         return requestUrl;
     });
 }
-function buildLocationRequestUrl(city) {
-    return __awaiter(this, void 0, void 0, function* () {
-        if (!locationKey) {
-            yield loadApiKey();
-        }
-        let baseUrl = "https://us1.locationiq.com/v1/search/structured";
-        const requestUrl = new URL(baseUrl);
-        requestUrl.searchParams.set("key", locationKey);
-        requestUrl.searchParams.set("format", "json");
-        requestUrl.searchParams.set("city", city);
-        return requestUrl;
-    });
-}
 function getWeather() {
     return __awaiter(this, void 0, void 0, function* () {
         let requestUrl = yield buildWeatherRequestUrl();
@@ -91,6 +80,29 @@ function getWeather() {
         return JSON.stringify(data);
     });
 }
+function displayWeatherFromInput(event) {
+    return __awaiter(this, void 0, void 0, function* () {
+        event.preventDefault();
+        let city = cityInput.querySelector("input").value;
+        console.log(city);
+        let coordinates = yield getLocationCoordinates(city);
+        locationDisplay.innerHTML = JSON.stringify(coordinates);
+    });
+}
+// Get and process Location Data
+function buildLocationRequestUrl(city) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!locationKey) {
+            yield loadApiKey();
+        }
+        let baseUrl = "https://us1.locationiq.com/v1/search/structured";
+        const requestUrl = new URL(baseUrl);
+        requestUrl.searchParams.set("key", locationKey);
+        requestUrl.searchParams.set("format", "json");
+        requestUrl.searchParams.set("city", city);
+        return requestUrl;
+    });
+}
 function getLocationCoordinates(city) {
     return __awaiter(this, void 0, void 0, function* () {
         let requestUrl = yield buildLocationRequestUrl(city);
@@ -106,15 +118,6 @@ function getLocationCoordinates(city) {
         }
         let data = yield response.json();
         return data;
-    });
-}
-function displayWeatherFromInput(event) {
-    return __awaiter(this, void 0, void 0, function* () {
-        event.preventDefault();
-        let city = cityInput.querySelector("input").value;
-        console.log(city);
-        let coordinates = yield getLocationCoordinates(city);
-        locationDisplay.innerHTML = JSON.stringify(coordinates);
     });
 }
 loadApiKey();

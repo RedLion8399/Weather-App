@@ -5,6 +5,7 @@ const weatherDisplay = document.getElementById("weather-display")!;
 const locationDisplay = document.getElementById("location-display")!;
 const cityInput = document.getElementById("city-input")!;
 
+// Get API Keys
 async function loadApiKey(): Promise<void> {
   interface Secrets {
     weatherKey: string;
@@ -33,6 +34,7 @@ async function loadApiKey(): Promise<void> {
   }
 }
 
+// Get and process Weather Data
 function displayWeather(weatherData: string): void {
   weatherDisplay.innerHTML = weatherData;
 }
@@ -68,21 +70,6 @@ async function buildWeatherRequestUrl(): Promise<URL> {
   return requestUrl;
 }
 
-async function buildLocationRequestUrl(city: string): Promise<URL> {
-  if (!locationKey) {
-    await loadApiKey();
-  }
-
-  let baseUrl: string = "https://us1.locationiq.com/v1/search/structured";
-  const requestUrl: URL = new URL(baseUrl);
-
-  requestUrl.searchParams.set("key", locationKey);
-  requestUrl.searchParams.set("format", "json");
-  requestUrl.searchParams.set("city", city);
-
-  return requestUrl;
-}
-
 async function getWeather(): Promise<string> {
   let requestUrl: URL = await buildWeatherRequestUrl();
 
@@ -97,6 +84,32 @@ async function getWeather(): Promise<string> {
   }
   let data = await response.json();
   return JSON.stringify(data);
+}
+
+async function displayWeatherFromInput(event: Event): Promise<void> {
+  event.preventDefault();
+
+  let city: string = cityInput.querySelector("input")!.value;
+  console.log(city);
+  let coordinates: Array<Location> = await getLocationCoordinates(city);
+
+  locationDisplay.innerHTML = JSON.stringify(coordinates);
+}
+
+// Get and process Location Data
+async function buildLocationRequestUrl(city: string): Promise<URL> {
+  if (!locationKey) {
+    await loadApiKey();
+  }
+
+  let baseUrl: string = "https://us1.locationiq.com/v1/search/structured";
+  const requestUrl: URL = new URL(baseUrl);
+
+  requestUrl.searchParams.set("key", locationKey);
+  requestUrl.searchParams.set("format", "json");
+  requestUrl.searchParams.set("city", city);
+
+  return requestUrl;
 }
 
 interface Location {
@@ -119,16 +132,6 @@ async function getLocationCoordinates(city: string): Promise<Array<Location>> {
   }
   let data: Array<Location> = await response.json();
   return data;
-}
-
-async function displayWeatherFromInput(event: Event): Promise<void> {
-  event.preventDefault();
-
-  let city: string = cityInput.querySelector("input")!.value;
-  console.log(city);
-  let coordinates: Array<Location> = await getLocationCoordinates(city);
-
-  locationDisplay.innerHTML = JSON.stringify(coordinates);
 }
 
 loadApiKey();
