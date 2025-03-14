@@ -35,7 +35,7 @@ function displayWeather(weatherData: string): void {
   weatherDisplay.innerHTML = weatherData;
 }
 
-async function buildRequestUrl(): Promise<URL> {
+async function buildWeatherRequestUrl(): Promise<URL> {
   if (!weatherKey) {
     await loadApiKey();
   }
@@ -66,8 +66,23 @@ async function buildRequestUrl(): Promise<URL> {
   return requestUrl;
 }
 
+async function buildLocationRequestUrl(city: string): Promise<URL> {
+  if (!locationKey) {
+    await loadApiKey();
+  }
+
+  let baseUrl: string = "https://us1.locationiq.com/v1/search/structured";
+  const requestUrl: URL = new URL(baseUrl);
+
+  requestUrl.searchParams.set("key", locationKey);
+  requestUrl.searchParams.set("format", "json");
+  requestUrl.searchParams.set("city", city);
+
+  return requestUrl;
+}
+
 async function getWeather(): Promise<string> {
-  let requestUrl: URL = await buildRequestUrl();
+  let requestUrl: URL = await buildWeatherRequestUrl();
 
   let response: Response;
   try {
@@ -80,6 +95,22 @@ async function getWeather(): Promise<string> {
   }
   let data = await response.json();
   return JSON.stringify(data);
+}
+
+async function getLocationCoordinates(city: string): Promise<Response> {
+  let requestUrl: URL = await buildLocationRequestUrl(city);
+
+  let response: Response;
+  try {
+    response = await fetch(requestUrl);
+  } catch (err) {
+    throw new Error(`${err} - API Request failed`);
+  }
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  let data = await response.json();
+  return data;
 }
 
 loadApiKey();

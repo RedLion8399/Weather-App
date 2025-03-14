@@ -33,7 +33,7 @@ function loadApiKey() {
 function displayWeather(weatherData) {
     weatherDisplay.innerHTML = weatherData;
 }
-function buildRequestUrl() {
+function buildWeatherRequestUrl() {
     return __awaiter(this, void 0, void 0, function* () {
         if (!weatherKey) {
             yield loadApiKey();
@@ -59,9 +59,22 @@ function buildRequestUrl() {
         return requestUrl;
     });
 }
+function buildLocationRequestUrl(city) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!locationKey) {
+            yield loadApiKey();
+        }
+        let baseUrl = "https://us1.locationiq.com/v1/search/structured";
+        const requestUrl = new URL(baseUrl);
+        requestUrl.searchParams.set("key", locationKey);
+        requestUrl.searchParams.set("format", "json");
+        requestUrl.searchParams.set("city", city);
+        return requestUrl;
+    });
+}
 function getWeather() {
     return __awaiter(this, void 0, void 0, function* () {
-        let requestUrl = yield buildRequestUrl();
+        let requestUrl = yield buildWeatherRequestUrl();
         let response;
         try {
             response = yield fetch(requestUrl);
@@ -74,6 +87,23 @@ function getWeather() {
         }
         let data = yield response.json();
         return JSON.stringify(data);
+    });
+}
+function getLocationCoordinates(city) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let requestUrl = yield buildLocationRequestUrl(city);
+        let response;
+        try {
+            response = yield fetch(requestUrl);
+        }
+        catch (err) {
+            throw new Error(`${err} - API Request failed`);
+        }
+        if (!response.ok) {
+            throw new Error(response.statusText);
+        }
+        let data = yield response.json();
+        return data;
     });
 }
 loadApiKey();
