@@ -1,7 +1,7 @@
 let weatherKey: string;
 let locationKey: string;
 
-const weatherDisplay = document.getElementById("weather-display");
+const weatherDisplay = document.getElementById("weather-display")!;
 
 async function loadApiKey(): Promise<void> {
   interface Secrets {
