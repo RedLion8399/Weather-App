@@ -39,15 +39,13 @@ function displayWeather(weatherData: string): void {
   weatherDisplay.innerHTML = weatherData;
 }
 
-async function buildWeatherRequestUrl(): Promise<URL> {
+async function buildWeatherRequestUrl(
+  lat: number = 51.44488,
+  lon: number = 8.34851
+): Promise<URL> {
   if (!weatherKey) {
     await loadApiKey();
   }
-
-  let lat: number;
-  let lon: number;
-  lat = 51.44488;
-  lon = 8.34851;
 
   let baseUrl: string = "https://api.openweathermap.org";
   const requestUrl: URL = new URL(baseUrl);
@@ -70,8 +68,11 @@ async function buildWeatherRequestUrl(): Promise<URL> {
   return requestUrl;
 }
 
-async function getWeather(): Promise<string> {
-  let requestUrl: URL = await buildWeatherRequestUrl();
+async function getWeather(
+  lat: number = 51.44488,
+  lon: number = 8.34851
+): Promise<string> {
+  let requestUrl: URL = await buildWeatherRequestUrl(lat, lon);
 
   let response: Response;
   try {
@@ -84,16 +85,6 @@ async function getWeather(): Promise<string> {
   }
   let data = await response.json();
   return JSON.stringify(data);
-}
-
-async function displayWeatherFromInput(event: Event): Promise<void> {
-  event.preventDefault();
-
-  let city: string = cityInput.querySelector("input")!.value;
-  console.log(city);
-  let coordinates: Array<Location> = await getLocationCoordinates(city);
-
-  locationDisplay.innerHTML = JSON.stringify(coordinates);
 }
 
 // Get and process Location Data
@@ -127,15 +118,40 @@ async function getLocationCoordinates(city: string): Promise<Array<Location>> {
   } catch (err) {
     throw new Error(`${err} - API Request failed`);
   }
-  if (!response.ok) {
+  if (response.status == 404) {
+    alert("City not found");
+    throw new Error("City not found");
+  } else if (!response.ok) {
     throw new Error(response.statusText);
   }
   let data: Array<Location> = await response.json();
   return data;
 }
 
+async function processLocation(locations: Array<Location>): Promise<void> {
+  if (locations.length == 1) {
+    let location: Location = locations[0];
+    let lat: number = location.lat;
+    let lon: number = location.lon;
+
+    let weatherData: string = await getWeather(lat, lon);
+
+    displayWeather(weatherData);
+  } else {
+    // Display the displayName of all locations
+  }
+  console.log(locations);
+}
+
+async function displayWeatherFromLocation(event: Event): Promise<void> {
+  event.preventDefault();
+
+  let city: string = cityInput.querySelector("input")!.value;
+  let locations: Array<Location> = await getLocationCoordinates(city);
+
+  await processLocation(locations);
+}
+
 loadApiKey();
 
-cityInput.addEventListener("submit", displayWeatherFromInput);
-
-getWeather().then((weatherData: string) => displayWeather(weatherData));
+cityInput.addEventListener("submit", displayWeatherFromLocation);
