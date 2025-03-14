@@ -3,6 +3,9 @@ let locationKey: string;
 
 const weatherDisplay = document.getElementById("weather-display")!;
 const locationDisplay = document.getElementById("location-display")!;
+const locationTemplate: HTMLTemplateElement = document.getElementById(
+  "location-template"
+) as HTMLTemplateElement;
 const cityInput = document.getElementById("city-input")!;
 
 // Get API Keys
@@ -129,6 +132,8 @@ async function getLocationCoordinates(city: string): Promise<Array<Location>> {
 }
 
 async function processLocation(locations: Array<Location>): Promise<void> {
+  locationDisplay.innerHTML = "";
+
   if (locations.length == 1) {
     let location: Location = locations[0];
     let lat: number = location.lat;
@@ -138,9 +143,23 @@ async function processLocation(locations: Array<Location>): Promise<void> {
 
     displayWeather(weatherData);
   } else {
-    // Display the displayName of all locations
+    locations.forEach((location) => {
+      let locationCard: Node = locationTemplate.content.cloneNode(true);
+      const locationContent = (locationCard as HTMLElement).querySelector(
+        "div"
+      )!;
+      locationContent.textContent = location.display_name;
+      locationContent.addEventListener("click", async () => {
+        let lat: number = location.lat;
+        let lon: number = location.lon;
+        let weatherData: string = await getWeather(lat, lon);
+        displayWeather(weatherData);
+        locationDisplay.innerHTML = "";
+      });
+
+      locationDisplay.appendChild(locationCard);
+    });
   }
-  console.log(locations);
 }
 
 async function displayWeatherFromLocation(event: Event): Promise<void> {

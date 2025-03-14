@@ -12,6 +12,7 @@ let weatherKey;
 let locationKey;
 const weatherDisplay = document.getElementById("weather-display");
 const locationDisplay = document.getElementById("location-display");
+const locationTemplate = document.getElementById("location-template");
 const cityInput = document.getElementById("city-input");
 // Get API Keys
 function loadApiKey() {
@@ -113,6 +114,7 @@ function getLocationCoordinates(city) {
 }
 function processLocation(locations) {
     return __awaiter(this, void 0, void 0, function* () {
+        locationDisplay.innerHTML = "";
         if (locations.length == 1) {
             let location = locations[0];
             let lat = location.lat;
@@ -121,9 +123,20 @@ function processLocation(locations) {
             displayWeather(weatherData);
         }
         else {
-            // Display the displayName of all locations
+            locations.forEach((location) => {
+                let locationCard = locationTemplate.content.cloneNode(true);
+                const locationContent = locationCard.querySelector("div");
+                locationContent.textContent = location.display_name;
+                locationContent.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+                    let lat = location.lat;
+                    let lon = location.lon;
+                    let weatherData = yield getWeather(lat, lon);
+                    displayWeather(weatherData);
+                    locationDisplay.innerHTML = "";
+                }));
+                locationDisplay.appendChild(locationCard);
+            });
         }
-        console.log(locations);
     });
 }
 function displayWeatherFromLocation(event) {
