@@ -1,8 +1,14 @@
 let weatherKey: string;
 let locationKey: string;
 
-const weatherDisplay = document.getElementById("weather-display");
+const weatherDisplay = document.getElementById("weather-display")!;
+const locationDisplay = document.getElementById("location-display")!;
+const locationTemplate: HTMLTemplateElement = document.getElementById(
+  "location-template"
+) as HTMLTemplateElement;
+const cityInput = document.getElementById("city-input")!;
 
+// Get API Keys
 async function loadApiKey(): Promise<void> {
   interface Secrets {
     weatherKey: string;
@@ -31,19 +37,18 @@ async function loadApiKey(): Promise<void> {
   }
 }
 
+// Get and process Weather Data
 function displayWeather(weatherData: string): void {
   weatherDisplay.innerHTML = weatherData;
 }
 
-async function buildRequestUrl(): Promise<URL> {
+async function buildWeatherRequestUrl(
+  lat: number = 51.44488,
+  lon: number = 8.34851
+): Promise<URL> {
   if (!weatherKey) {
     await loadApiKey();
   }
-
-  let lat: number;
-  let lon: number;
-  lat = 51.44488;
-  lon = 8.34851;
 
   let baseUrl: string = "https://api.openweathermap.org";
   const requestUrl: URL = new URL(baseUrl);
@@ -66,8 +71,11 @@ async function buildRequestUrl(): Promise<URL> {
   return requestUrl;
 }
 
-async function getWeather(): Promise<string> {
-  let requestUrl: URL = await buildRequestUrl();
+async function getWeather(
+  lat: number = 51.44488,
+  lon: number = 8.34851
+): Promise<string> {
+  let requestUrl: URL = await buildWeatherRequestUrl(lat, lon);
 
   let response: Response;
   try {
@@ -82,5 +90,87 @@ async function getWeather(): Promise<string> {
   return JSON.stringify(data);
 }
 
+// Get and process Location Data
+async function buildLocationRequestUrl(city: string): Promise<URL> {
+  if (!locationKey) {
+    await loadApiKey();
+  }
+
+  let baseUrl: string = "https://us1.locationiq.com/v1/search/structured";
+  const requestUrl: URL = new URL(baseUrl);
+
+  requestUrl.searchParams.set("key", locationKey);
+  requestUrl.searchParams.set("format", "json");
+  requestUrl.searchParams.set("city", city);
+
+  return requestUrl;
+}
+
+interface Location {
+  lat: number;
+  lon: number;
+  display_name: string;
+}
+
+async function getLocationCoordinates(city: string): Promise<Array<Location>> {
+  let requestUrl: URL = await buildLocationRequestUrl(city);
+
+  let response: Response;
+  try {
+    response = await fetch(requestUrl);
+  } catch (err) {
+    throw new Error(`${err} - API Request failed`);
+  }
+  if (response.status == 404) {
+    alert("City not found");
+    throw new Error("City not found");
+  } else if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+  let data: Array<Location> = await response.json();
+  return data;
+}
+
+async function processLocation(locations: Array<Location>): Promise<void> {
+  locationDisplay.innerHTML = "";
+
+  if (locations.length == 1) {
+    let location: Location = locations[0];
+    let lat: number = location.lat;
+    let lon: number = location.lon;
+
+    let weatherData: string = await getWeather(lat, lon);
+
+    displayWeather(weatherData);
+  } else {
+    locations.forEach((location) => {
+      let locationCard: Node = locationTemplate.content.cloneNode(true);
+      const locationContent = (locationCard as HTMLElement).querySelector(
+        "div"
+      )!;
+      locationContent.textContent = location.display_name;
+      locationContent.addEventListener("click", async () => {
+        let lat: number = location.lat;
+        let lon: number = location.lon;
+        let weatherData: string = await getWeather(lat, lon);
+        displayWeather(weatherData);
+        locationDisplay.innerHTML = "";
+      });
+
+      locationDisplay.appendChild(locationCard);
+    });
+  }
+}
+
+async function displayWeatherFromLocation(event: Event): Promise<void> {
+  event.preventDefault();
+
+  let city: string = cityInput.querySelector("input")!.value;
+  let locations: Array<Location> = await getLocationCoordinates(city);
+
+  await processLocation(locations);
+}
+
 loadApiKey();
-getWeather().then((weatherData: string) => displayWeather(weatherData));
+
+cityInput.addEventListener("submit", displayWeatherFromLocation);

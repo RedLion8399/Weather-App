@@ -11,6 +11,10 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 let weatherKey;
 let locationKey;
 const weatherDisplay = document.getElementById("weather-display");
+const locationDisplay = document.getElementById("location-display");
+const locationTemplate = document.getElementById("location-template");
+const cityInput = document.getElementById("city-input");
+// Get API Keys
 function loadApiKey() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -30,18 +34,15 @@ function loadApiKey() {
         }
     });
 }
+// Get and process Weather Data
 function displayWeather(weatherData) {
     weatherDisplay.innerHTML = weatherData;
 }
-function buildRequestUrl() {
-    return __awaiter(this, void 0, void 0, function* () {
+function buildWeatherRequestUrl() {
+    return __awaiter(this, arguments, void 0, function* (lat = 51.44488, lon = 8.34851) {
         if (!weatherKey) {
             yield loadApiKey();
         }
-        let lat;
-        let lon;
-        lat = 51.44488;
-        lon = 8.34851;
         let baseUrl = "https://api.openweathermap.org";
         const requestUrl = new URL(baseUrl);
         // The free plan offers three different APIs:
@@ -60,8 +61,8 @@ function buildRequestUrl() {
     });
 }
 function getWeather() {
-    return __awaiter(this, void 0, void 0, function* () {
-        let requestUrl = yield buildRequestUrl();
+    return __awaiter(this, arguments, void 0, function* (lat = 51.44488, lon = 8.34851) {
+        let requestUrl = yield buildWeatherRequestUrl(lat, lon);
         let response;
         try {
             response = yield fetch(requestUrl);
@@ -76,5 +77,75 @@ function getWeather() {
         return JSON.stringify(data);
     });
 }
+// Get and process Location Data
+function buildLocationRequestUrl(city) {
+    return __awaiter(this, void 0, void 0, function* () {
+        if (!locationKey) {
+            yield loadApiKey();
+        }
+        let baseUrl = "https://us1.locationiq.com/v1/search/structured";
+        const requestUrl = new URL(baseUrl);
+        requestUrl.searchParams.set("key", locationKey);
+        requestUrl.searchParams.set("format", "json");
+        requestUrl.searchParams.set("city", city);
+        return requestUrl;
+    });
+}
+function getLocationCoordinates(city) {
+    return __awaiter(this, void 0, void 0, function* () {
+        let requestUrl = yield buildLocationRequestUrl(city);
+        let response;
+        try {
+            response = yield fetch(requestUrl);
+        }
+        catch (err) {
+            throw new Error(`${err} - API Request failed`);
+        }
+        if (response.status == 404) {
+            alert("City not found");
+            throw new Error("City not found");
+        }
+        else if (!response.ok) {
+            throw new Error(response.statusText);
+        }
+        let data = yield response.json();
+        return data;
+    });
+}
+function processLocation(locations) {
+    return __awaiter(this, void 0, void 0, function* () {
+        locationDisplay.innerHTML = "";
+        if (locations.length == 1) {
+            let location = locations[0];
+            let lat = location.lat;
+            let lon = location.lon;
+            let weatherData = yield getWeather(lat, lon);
+            displayWeather(weatherData);
+        }
+        else {
+            locations.forEach((location) => {
+                let locationCard = locationTemplate.content.cloneNode(true);
+                const locationContent = locationCard.querySelector("div");
+                locationContent.textContent = location.display_name;
+                locationContent.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
+                    let lat = location.lat;
+                    let lon = location.lon;
+                    let weatherData = yield getWeather(lat, lon);
+                    displayWeather(weatherData);
+                    locationDisplay.innerHTML = "";
+                }));
+                locationDisplay.appendChild(locationCard);
+            });
+        }
+    });
+}
+function displayWeatherFromLocation(event) {
+    return __awaiter(this, void 0, void 0, function* () {
+        event.preventDefault();
+        let city = cityInput.querySelector("input").value;
+        let locations = yield getLocationCoordinates(city);
+        yield processLocation(locations);
+    });
+}
 loadApiKey();
-getWeather().then((weatherData) => displayWeather(weatherData));
+cityInput.addEventListener("submit", displayWeatherFromLocation);
