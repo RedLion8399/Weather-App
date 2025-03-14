@@ -99,7 +99,13 @@ async function getWeather(): Promise<string> {
   return JSON.stringify(data);
 }
 
-async function getLocationCoordinates(city: string): Promise<Response> {
+interface Location {
+  lat: number;
+  lon: number;
+  display_name: string;
+}
+
+async function getLocationCoordinates(city: string): Promise<Array<Location>> {
   let requestUrl: URL = await buildLocationRequestUrl(city);
 
   let response: Response;
@@ -111,7 +117,7 @@ async function getLocationCoordinates(city: string): Promise<Response> {
   if (!response.ok) {
     throw new Error(response.statusText);
   }
-  let data = await response.json();
+  let data: Array<Location> = await response.json();
   return data;
 }
 
@@ -120,7 +126,7 @@ async function displayWeatherFromInput(event: Event): Promise<void> {
 
   let city: string = cityInput.querySelector("input")!.value;
   console.log(city);
-  let coordinates = await getLocationCoordinates(city);
+  let coordinates: Array<Location> = await getLocationCoordinates(city);
 
   locationDisplay.innerHTML = JSON.stringify(coordinates);
 }
