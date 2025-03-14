@@ -2,6 +2,8 @@ let weatherKey: string;
 let locationKey: string;
 
 const weatherDisplay = document.getElementById("weather-display")!;
+const locationDisplay = document.getElementById("location-display")!;
+const cityInput = document.getElementById("city-input")!;
 
 async function loadApiKey(): Promise<void> {
   interface Secrets {
@@ -113,5 +115,18 @@ async function getLocationCoordinates(city: string): Promise<Response> {
   return data;
 }
 
+async function displayWeatherFromInput(event: Event): Promise<void> {
+  event.preventDefault();
+
+  let city: string = cityInput.querySelector("input")!.value;
+  console.log(city);
+  let coordinates = await getLocationCoordinates(city);
+
+  locationDisplay.innerHTML = JSON.stringify(coordinates);
+}
+
 loadApiKey();
+
+cityInput.addEventListener("submit", displayWeatherFromInput);
+
 getWeather().then((weatherData: string) => displayWeather(weatherData));

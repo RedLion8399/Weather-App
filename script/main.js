@@ -11,6 +11,8 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 let weatherKey;
 let locationKey;
 const weatherDisplay = document.getElementById("weather-display");
+const locationDisplay = document.getElementById("location-display");
+const cityInput = document.getElementById("city-input");
 function loadApiKey() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -106,5 +108,15 @@ function getLocationCoordinates(city) {
         return data;
     });
 }
+function displayWeatherFromInput(event) {
+    return __awaiter(this, void 0, void 0, function* () {
+        event.preventDefault();
+        let city = cityInput.querySelector("input").value;
+        console.log(city);
+        let coordinates = yield getLocationCoordinates(city);
+        locationDisplay.innerHTML = JSON.stringify(coordinates);
+    });
+}
 loadApiKey();
+cityInput.addEventListener("submit", displayWeatherFromInput);
 getWeather().then((weatherData) => displayWeather(weatherData));
