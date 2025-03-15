@@ -103,6 +103,9 @@ function displayWeather(
     currentWeatherData.weather[0].description;
   document.getElementById("country")!.textContent =
     currentWeatherData.sys.country;
+  (
+    document.getElementById("icon")! as HTMLImageElement
+  ).src = `https://openweathermap.org/img/wn/${currentWeatherData.weather[0].icon}@2x.png`;
   document.getElementById("temp")!.textContent = Math.round(
     currentWeatherData.main.temp
   ).toString();
