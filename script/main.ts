@@ -71,6 +71,29 @@ async function buildWeatherRequestUrl(
   return requestUrl;
 }
 
+interface CurrentWeather {
+  weather: [main: string, description: string, icon: string];
+
+  main: [
+    temp: number,
+    feels_like: number,
+    temp_min: number,
+    temp_max: number,
+    pressure: number,
+    humidity: number,
+    sea_level: number,
+    grnd_level: number
+  ];
+
+  visibility: number;
+  wind: [speed: number, deg: number, gust: number];
+  rain: { "1h": number };
+  clouds: { all: number };
+  sys: [sunrise: number, sunset: number];
+  timezone: number;
+  name: string;
+}
+
 async function getWeather(
   lat: number = 51.44488,
   lon: number = 8.34851
