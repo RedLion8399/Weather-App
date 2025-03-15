@@ -176,3 +176,4 @@ function displayWeatherFromLocation(event) {
 }
 loadApiKey();
 cityInput.addEventListener("submit", displayWeatherFromLocation);
+getWeather().then((data) => displayWeather(data));

@@ -293,3 +293,4 @@ async function displayWeatherFromLocation(event: Event): Promise<void> {
 loadApiKey();
 
 cityInput.addEventListener("submit", displayWeatherFromLocation);
+(getWeather() as Promise<CurrentWeather>).then((data) => displayWeather(data));
