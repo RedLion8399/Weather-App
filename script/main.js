@@ -35,34 +35,61 @@ function loadApiKey() {
     });
 }
 // Get and process Weather Data
-function displayWeather(weatherData) {
-    weatherDisplay.innerHTML = weatherData;
+function displayWeather(currentWeatherData, forecastWeatherData) {
+    document.getElementById("name").textContent = currentWeatherData.name;
+    document.getElementById("description").textContent =
+        currentWeatherData.weather[0].description;
+    document.getElementById("country").textContent =
+        currentWeatherData.sys.country;
+    document.getElementById("icon").src = `https://openweathermap.org/img/wn/${currentWeatherData.weather[0].icon}@2x.png`;
+    document.getElementById("temp").textContent = Math.round(currentWeatherData.main.temp).toString();
+    document.getElementById("feels-like").textContent = Math.round(currentWeatherData.main.feels_like).toString();
+    document.getElementById("temp-min").textContent = Math.round(currentWeatherData.main.temp_min).toString();
+    document.getElementById("temp-max").textContent = Math.round(currentWeatherData.main.temp_max).toString();
+    document.getElementById("pressure").textContent = Math.round(currentWeatherData.main.pressure).toString();
+    document.getElementById("humidity").textContent = Math.round(currentWeatherData.main.humidity).toString();
+    document.getElementById("visibility").textContent = Math.round(currentWeatherData.visibility).toString();
+    document.getElementById("wind-speed").textContent = Math.round(currentWeatherData.wind.speed).toString();
+    document.getElementById("wind-deg").textContent = Math.round(currentWeatherData.wind.deg).toString();
+    document.getElementById("wind-gust").textContent = Math.round(currentWeatherData.wind.gust).toString();
+    document.getElementById("sunrise").textContent = new Date((currentWeatherData.sys.sunrise + currentWeatherData.timezone) * 1000).toLocaleTimeString("de-DE", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "UTC",
+    });
+    document.getElementById("sunset").textContent = new Date((currentWeatherData.sys.sunset + currentWeatherData.timezone) * 1000).toLocaleTimeString("de-DE", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "UTC",
+    });
 }
 function buildWeatherRequestUrl() {
-    return __awaiter(this, arguments, void 0, function* (lat = 51.44488, lon = 8.34851) {
+    return __awaiter(this, arguments, void 0, function* (lat = 51.44488, lon = 8.34851, current = true) {
         if (!weatherKey) {
             yield loadApiKey();
         }
         let baseUrl = "https://api.openweathermap.org";
         const requestUrl = new URL(baseUrl);
-        // The free plan offers three different APIs:
+        // The free plan offers two different APIs:
         // - https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
-        // - api.openweathermap.org/data/2.5/forecast/daily?lat={lat}&lon={lon}&cnt={cnt}&appid={API key}
-        // - api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
+        // - https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
         requestUrl.searchParams.set("lat", lat.toString());
         requestUrl.searchParams.set("lon", lon.toString());
         requestUrl.searchParams.set("appid", weatherKey);
         requestUrl.searchParams.set("units", "metric");
         requestUrl.searchParams.set("lang", "de");
-        requestUrl.pathname = "data/2.5/weather";
-        // requestUrl.pathname = "data/2.5/forecast/daily";
-        // requestUrl.pathname = "data/2.5/forecast";
+        if (current) {
+            requestUrl.pathname = "data/2.5/weather";
+        }
+        else {
+            requestUrl.pathname = "data/2.5/forecast";
+        }
         return requestUrl;
     });
 }
 function getWeather() {
-    return __awaiter(this, arguments, void 0, function* (lat = 51.44488, lon = 8.34851) {
-        let requestUrl = yield buildWeatherRequestUrl(lat, lon);
+    return __awaiter(this, arguments, void 0, function* (lat = 51.44488, lon = 8.34851, current = true) {
+        let requestUrl = yield buildWeatherRequestUrl(lat, lon, current);
         let response;
         try {
             response = yield fetch(requestUrl);
@@ -74,7 +101,7 @@ function getWeather() {
             throw new Error(response.statusText);
         }
         let data = yield response.json();
-        return JSON.stringify(data);
+        return data;
     });
 }
 // Get and process Location Data
@@ -119,7 +146,7 @@ function processLocation(locations) {
             let location = locations[0];
             let lat = location.lat;
             let lon = location.lon;
-            let weatherData = yield getWeather(lat, lon);
+            let weatherData = (yield getWeather(lat, lon));
             displayWeather(weatherData);
         }
         else {
@@ -130,7 +157,7 @@ function processLocation(locations) {
                 locationContent.addEventListener("click", () => __awaiter(this, void 0, void 0, function* () {
                     let lat = location.lat;
                     let lon = location.lon;
-                    let weatherData = yield getWeather(lat, lon);
+                    let weatherData = (yield getWeather(lat, lon));
                     displayWeather(weatherData);
                     locationDisplay.innerHTML = "";
                 }));
@@ -149,3 +176,4 @@ function displayWeatherFromLocation(event) {
 }
 loadApiKey();
 cityInput.addEventListener("submit", displayWeatherFromLocation);
+getWeather().then((data) => displayWeather(data));

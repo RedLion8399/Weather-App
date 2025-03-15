@@ -36,15 +36,126 @@ async function loadApiKey(): Promise<void> {
     );
   }
 }
+interface CurrentWeather {
+  weather: [{ main: string; description: string; icon: string }];
+
+  main: {
+    temp: number;
+    feels_like: number;
+    temp_min: number;
+    temp_max: number;
+    pressure: number;
+    humidity: number;
+    sea_level: number;
+    grnd_level: number;
+  };
+
+  visibility: number;
+  wind: { speed: number; deg: number; gust: number };
+  rain: { "1h": number };
+  clouds: { all: number };
+  sys: { sunrise: number; sunset: number; country: string };
+  timezone: number;
+  name: string;
+}
+
+interface ForecastWeather {
+  cnt: number;
+  list: Array<{
+    dt: number;
+    main: {
+      temp: number;
+      feels_like: number;
+      temp_min: number;
+      temp_max: number;
+      pressure: number;
+      sea_level: number;
+      grnd_level: number;
+      humidity: number;
+    };
+    weather: { main: string; description: string; icon: string };
+    clouds: { all: number };
+    wind: { speed: number; deg: number; gust: number };
+    visibility: number;
+    pop: number;
+    rain: { "3h": number };
+    sys: { pod: string };
+    dt_txt: string;
+  }>;
+
+  city: {
+    name: string;
+    country: string;
+    population: number;
+    timezone: number;
+    sunrise: number;
+    sunset: number;
+  };
+}
 
 // Get and process Weather Data
-function displayWeather(weatherData: string): void {
-  weatherDisplay.innerHTML = weatherData;
+function displayWeather(
+  currentWeatherData: CurrentWeather,
+  forecastWeatherData?: ForecastWeather
+): void {
+  document.getElementById("name")!.textContent = currentWeatherData.name;
+  document.getElementById("description")!.textContent =
+    currentWeatherData.weather[0].description;
+  document.getElementById("country")!.textContent =
+    currentWeatherData.sys.country;
+  (
+    document.getElementById("icon")! as HTMLImageElement
+  ).src = `https://openweathermap.org/img/wn/${currentWeatherData.weather[0].icon}@2x.png`;
+  document.getElementById("temp")!.textContent = Math.round(
+    currentWeatherData.main.temp
+  ).toString();
+  document.getElementById("feels-like")!.textContent = Math.round(
+    currentWeatherData.main.feels_like
+  ).toString();
+  document.getElementById("temp-min")!.textContent = Math.round(
+    currentWeatherData.main.temp_min
+  ).toString();
+  document.getElementById("temp-max")!.textContent = Math.round(
+    currentWeatherData.main.temp_max
+  ).toString();
+  document.getElementById("pressure")!.textContent = Math.round(
+    currentWeatherData.main.pressure
+  ).toString();
+  document.getElementById("humidity")!.textContent = Math.round(
+    currentWeatherData.main.humidity
+  ).toString();
+  document.getElementById("visibility")!.textContent = Math.round(
+    currentWeatherData.visibility
+  ).toString();
+  document.getElementById("wind-speed")!.textContent = Math.round(
+    currentWeatherData.wind.speed
+  ).toString();
+  document.getElementById("wind-deg")!.textContent = Math.round(
+    currentWeatherData.wind.deg
+  ).toString();
+  document.getElementById("wind-gust")!.textContent = Math.round(
+    currentWeatherData.wind.gust
+  ).toString();
+  document.getElementById("sunrise")!.textContent = new Date(
+    (currentWeatherData.sys.sunrise + currentWeatherData.timezone) * 1000
+  ).toLocaleTimeString("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC",
+  });
+  document.getElementById("sunset")!.textContent = new Date(
+    (currentWeatherData.sys.sunset + currentWeatherData.timezone) * 1000
+  ).toLocaleTimeString("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC",
+  });
 }
 
 async function buildWeatherRequestUrl(
   lat: number = 51.44488,
-  lon: number = 8.34851
+  lon: number = 8.34851,
+  current: boolean = true
 ): Promise<URL> {
   if (!weatherKey) {
     await loadApiKey();
@@ -53,10 +164,9 @@ async function buildWeatherRequestUrl(
   let baseUrl: string = "https://api.openweathermap.org";
   const requestUrl: URL = new URL(baseUrl);
 
-  // The free plan offers three different APIs:
+  // The free plan offers two different APIs:
   // - https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
-  // - api.openweathermap.org/data/2.5/forecast/daily?lat={lat}&lon={lon}&cnt={cnt}&appid={API key}
-  // - api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
+  // - https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
 
   requestUrl.searchParams.set("lat", lat.toString());
   requestUrl.searchParams.set("lon", lon.toString());
@@ -64,18 +174,21 @@ async function buildWeatherRequestUrl(
   requestUrl.searchParams.set("units", "metric");
   requestUrl.searchParams.set("lang", "de");
 
-  requestUrl.pathname = "data/2.5/weather";
-  // requestUrl.pathname = "data/2.5/forecast/daily";
-  // requestUrl.pathname = "data/2.5/forecast";
+  if (current) {
+    requestUrl.pathname = "data/2.5/weather";
+  } else {
+    requestUrl.pathname = "data/2.5/forecast";
+  }
 
   return requestUrl;
 }
 
 async function getWeather(
   lat: number = 51.44488,
-  lon: number = 8.34851
-): Promise<string> {
-  let requestUrl: URL = await buildWeatherRequestUrl(lat, lon);
+  lon: number = 8.34851,
+  current: boolean = true
+): Promise<CurrentWeather | ForecastWeather> {
+  let requestUrl: URL = await buildWeatherRequestUrl(lat, lon, current);
 
   let response: Response;
   try {
@@ -87,7 +200,7 @@ async function getWeather(
     throw new Error(response.statusText);
   }
   let data = await response.json();
-  return JSON.stringify(data);
+  return data;
 }
 
 // Get and process Location Data
@@ -139,7 +252,10 @@ async function processLocation(locations: Array<Location>): Promise<void> {
     let lat: number = location.lat;
     let lon: number = location.lon;
 
-    let weatherData: string = await getWeather(lat, lon);
+    let weatherData: CurrentWeather = (await getWeather(
+      lat,
+      lon
+    )) as CurrentWeather;
 
     displayWeather(weatherData);
   } else {
@@ -152,7 +268,10 @@ async function processLocation(locations: Array<Location>): Promise<void> {
       locationContent.addEventListener("click", async () => {
         let lat: number = location.lat;
         let lon: number = location.lon;
-        let weatherData: string = await getWeather(lat, lon);
+        let weatherData: CurrentWeather = (await getWeather(
+          lat,
+          lon
+        )) as CurrentWeather;
         displayWeather(weatherData);
         locationDisplay.innerHTML = "";
       });
@@ -174,3 +293,4 @@ async function displayWeatherFromLocation(event: Event): Promise<void> {
 loadApiKey();
 
 cityInput.addEventListener("submit", displayWeatherFromLocation);
+(getWeather() as Promise<CurrentWeather>).then((data) => displayWeather(data));
