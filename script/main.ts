@@ -37,7 +37,7 @@ async function loadApiKey(): Promise<void> {
   }
 }
 interface CurrentWeather {
-  weather: { main: string; description: string; icon: string };
+  weather: [{ main: string; description: string; icon: string }];
 
   main: {
     temp: number;
@@ -54,7 +54,7 @@ interface CurrentWeather {
   wind: { speed: number; deg: number; gust: number };
   rain: { "1h": number };
   clouds: { all: number };
-  sys: { sunrise: number; sunset: number };
+  sys: { sunrise: number; sunset: number; country: string };
   timezone: number;
   name: string;
 }
@@ -98,7 +98,55 @@ function displayWeather(
   currentWeatherData: CurrentWeather,
   forecastWeatherData?: ForecastWeather
 ): void {
-  weatherDisplay.innerHTML = JSON.stringify(currentWeatherData);
+  document.getElementById("name")!.textContent = currentWeatherData.name;
+  document.getElementById("description")!.textContent =
+    currentWeatherData.weather[0].description;
+  document.getElementById("country")!.textContent =
+    currentWeatherData.sys.country;
+  document.getElementById("temp")!.textContent = Math.round(
+    currentWeatherData.main.temp
+  ).toString();
+  document.getElementById("feels-like")!.textContent = Math.round(
+    currentWeatherData.main.feels_like
+  ).toString();
+  document.getElementById("temp-min")!.textContent = Math.round(
+    currentWeatherData.main.temp_min
+  ).toString();
+  document.getElementById("temp-max")!.textContent = Math.round(
+    currentWeatherData.main.temp_max
+  ).toString();
+  document.getElementById("pressure")!.textContent = Math.round(
+    currentWeatherData.main.pressure
+  ).toString();
+  document.getElementById("humidity")!.textContent = Math.round(
+    currentWeatherData.main.humidity
+  ).toString();
+  document.getElementById("visibility")!.textContent = Math.round(
+    currentWeatherData.visibility
+  ).toString();
+  document.getElementById("wind-speed")!.textContent = Math.round(
+    currentWeatherData.wind.speed
+  ).toString();
+  document.getElementById("wind-deg")!.textContent = Math.round(
+    currentWeatherData.wind.deg
+  ).toString();
+  document.getElementById("wind-gust")!.textContent = Math.round(
+    currentWeatherData.wind.gust
+  ).toString();
+  document.getElementById("sunrise")!.textContent = new Date(
+    (currentWeatherData.sys.sunrise + currentWeatherData.timezone) * 1000
+  ).toLocaleTimeString("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC",
+  });
+  document.getElementById("sunset")!.textContent = new Date(
+    (currentWeatherData.sys.sunset + currentWeatherData.timezone) * 1000
+  ).toLocaleTimeString("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC",
+  });
 }
 
 async function buildWeatherRequestUrl(
@@ -113,10 +161,9 @@ async function buildWeatherRequestUrl(
   let baseUrl: string = "https://api.openweathermap.org";
   const requestUrl: URL = new URL(baseUrl);
 
-  // The free plan offers three different APIs:
+  // The free plan offers two different APIs:
   // - https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={API key}
-  // - api.openweathermap.org/data/2.5/forecast/daily?lat={lat}&lon={lon}&cnt={cnt}&appid={API key}
-  // - api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
+  // - https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={API key}
 
   requestUrl.searchParams.set("lat", lat.toString());
   requestUrl.searchParams.set("lon", lon.toString());
