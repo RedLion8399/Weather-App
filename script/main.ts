@@ -38,13 +38,17 @@ async function loadApiKey(): Promise<void> {
 }
 
 // Get and process Weather Data
-function displayWeather(weatherData: string): void {
-  weatherDisplay.innerHTML = weatherData;
+function displayWeather(
+  currentWeatherData: CurrentWeather,
+  forecastWeatherData?: ForecastWeather
+): void {
+  weatherDisplay.innerHTML = JSON.stringify(currentWeatherData);
 }
 
 async function buildWeatherRequestUrl(
   lat: number = 51.44488,
-  lon: number = 8.34851
+  lon: number = 8.34851,
+  current: boolean = true
 ): Promise<URL> {
   if (!weatherKey) {
     await loadApiKey();
@@ -64,9 +68,11 @@ async function buildWeatherRequestUrl(
   requestUrl.searchParams.set("units", "metric");
   requestUrl.searchParams.set("lang", "de");
 
-  requestUrl.pathname = "data/2.5/weather";
-  // requestUrl.pathname = "data/2.5/forecast/daily";
-  // requestUrl.pathname = "data/2.5/forecast";
+  if (current) {
+    requestUrl.pathname = "data/2.5/weather";
+  } else {
+    requestUrl.pathname = "data/2.5/forecast";
+  }
 
   return requestUrl;
 }
@@ -130,9 +136,10 @@ interface ForecastWeather {
 
 async function getWeather(
   lat: number = 51.44488,
-  lon: number = 8.34851
-): Promise<string> {
-  let requestUrl: URL = await buildWeatherRequestUrl(lat, lon);
+  lon: number = 8.34851,
+  current: boolean = true
+): Promise<CurrentWeather | ForecastWeather> {
+  let requestUrl: URL = await buildWeatherRequestUrl(lat, lon, current);
 
   let response: Response;
   try {
@@ -144,7 +151,7 @@ async function getWeather(
     throw new Error(response.statusText);
   }
   let data = await response.json();
-  return JSON.stringify(data);
+  return data;
 }
 
 // Get and process Location Data
@@ -196,7 +203,10 @@ async function processLocation(locations: Array<Location>): Promise<void> {
     let lat: number = location.lat;
     let lon: number = location.lon;
 
-    let weatherData: string = await getWeather(lat, lon);
+    let weatherData: CurrentWeather = (await getWeather(
+      lat,
+      lon
+    )) as CurrentWeather;
 
     displayWeather(weatherData);
   } else {
@@ -209,7 +219,10 @@ async function processLocation(locations: Array<Location>): Promise<void> {
       locationContent.addEventListener("click", async () => {
         let lat: number = location.lat;
         let lon: number = location.lon;
-        let weatherData: string = await getWeather(lat, lon);
+        let weatherData: CurrentWeather = (await getWeather(
+          lat,
+          lon
+        )) as CurrentWeather;
         displayWeather(weatherData);
         locationDisplay.innerHTML = "";
       });
