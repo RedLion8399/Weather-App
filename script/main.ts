@@ -55,6 +55,7 @@ interface CurrentWeather {
   rain: { "1h": number };
   clouds: { all: number };
   sys: { sunrise: number; sunset: number; country: string };
+  dt: number;
   timezone: number;
   name: string;
 }
@@ -98,11 +99,27 @@ function displayWeather(
   currentWeatherData: CurrentWeather,
   forecastWeatherData?: ForecastWeather
 ): void {
-  document.getElementById("name")!.textContent = currentWeatherData.name;
-  document.getElementById("description")!.textContent =
-    currentWeatherData.weather[0].description;
+  document.getElementById("city-name")!.textContent = currentWeatherData.name;
   document.getElementById("country")!.textContent =
     currentWeatherData.sys.country;
+  document.getElementById("time")!.textContent = new Date(
+    (currentWeatherData.dt + currentWeatherData.timezone) * 1000
+  ).toLocaleTimeString("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit",
+    timeZone: "UTC",
+  });
+  document.getElementById("date")!.textContent = new Date(
+    (currentWeatherData.dt + currentWeatherData.timezone) * 1000
+  ).toLocaleDateString("de-DE", {
+    weekday: "long",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
+  document.getElementById("description")!.textContent =
+    currentWeatherData.weather[0].description;
   (
     document.getElementById("icon")! as HTMLImageElement
   ).src = `https://openweathermap.org/img/wn/${currentWeatherData.weather[0].icon}@2x.png`;

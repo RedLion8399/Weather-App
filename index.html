@@ -7,7 +7,14 @@
     <title>Weather App</title>
   </head>
   <body>
-    <header>Location Date Time</header>
+    <header>
+      <div>
+        <span id="city-name"></span>,
+        <span id="country"></span>
+      </div>
+      <span id="date"></span>
+      <span id="time"></span>
+    </header>
 
     <form id="city-input">
       <input type="text" name="city" id="city" placeholder="Warstein" />
@@ -17,12 +24,10 @@
     <br />
 
     <div id="weather-display">
-      <div>Stadt: <span id="name"></span></div>
-      <div>Land: <span id="country"></span></div>
       <div>Wetter: <span id="description"></span></div>
       <div><img src="" alt="Pictogram of the weather" id="icon" /></div>
       <br />
-      <div><span id="temp"></span> °C</div>
+      <div><span id="temp">Temparatur: </span> °C</div>
       <div>Gefühlte Temperatur: <span id="feels-like"></span> °C</div>
       <div>Mindesttemparatur: <span id="temp-min"></span> °C</div>
       <div>Maximale Temperatur: <span id="temp-max"></span> °C</div>

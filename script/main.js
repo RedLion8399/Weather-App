@@ -36,11 +36,22 @@ function loadApiKey() {
 }
 // Get and process Weather Data
 function displayWeather(currentWeatherData, forecastWeatherData) {
-    document.getElementById("name").textContent = currentWeatherData.name;
-    document.getElementById("description").textContent =
-        currentWeatherData.weather[0].description;
+    document.getElementById("city-name").textContent = currentWeatherData.name;
     document.getElementById("country").textContent =
         currentWeatherData.sys.country;
+    document.getElementById("time").textContent = new Date((currentWeatherData.dt + currentWeatherData.timezone) * 1000).toLocaleTimeString("de-DE", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "UTC",
+    });
+    document.getElementById("date").textContent = new Date((currentWeatherData.dt + currentWeatherData.timezone) * 1000).toLocaleDateString("de-DE", {
+        weekday: "long",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+    });
+    document.getElementById("description").textContent =
+        currentWeatherData.weather[0].description;
     document.getElementById("icon").src = `https://openweathermap.org/img/wn/${currentWeatherData.weather[0].icon}@2x.png`;
     document.getElementById("temp").textContent = Math.round(currentWeatherData.main.temp).toString();
     document.getElementById("feels-like").textContent = Math.round(currentWeatherData.main.feels_like).toString();
