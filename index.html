@@ -16,12 +16,14 @@
       <span id="time"></span>
     </header>
 
-    <form id="city-input">
-      <input type="text" name="city" id="city" placeholder="Warstein" />
+    <div id="city-search">
+      <form id="city-input">
+        <input type="text" name="city" id="city" placeholder="Warstein" />
 
-      <button type="submit">Submit</button>
-    </form>
-    <br />
+        <button type="submit">Submit</button>
+      </form>
+      <div id="location-display"></div>
+    </div>
 
     <div id="weather-display">
       <div>Wetter: <span id="description"></span></div>
@@ -53,8 +55,6 @@
         <div>Sonnenuntergang: <span id="sunset"></span></div>
       </div>
     </div>
-
-    <div id="location-display"></div>
 
     <template id="location-template">
       <div class="location-card"></div>
