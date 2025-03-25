@@ -30,3 +30,49 @@ header {
   padding: 0.5em;
   font-size: 1em;
 }
+
+#weather-display {
+  display: grid;
+  grid-template-areas:
+    "temp-min-max feels-like clothing sky-info"
+    "sun-info description clothing sky-info"
+    "air-info image clothing sky-info"
+    "air-info temperature clothing sky-info";
+  grid-template-columns: 1fr 2fr 2fr 1fr;
+  grid-gap: 10px;
+  justify-items: center;
+
+  font-size: 20px;
+}
+
+#temperature-min-max {
+  grid-area: temp-min-max;
+}
+
+#weather-display div:has(#feels-like) {
+  grid-area: feels-like;
+}
+
+#weather-display div:has(#temp) {
+  grid-area: temperature;
+}
+
+#weather-display div:has(#description) {
+  grid-area: description;
+}
+
+#weather-display div:has(#icon) {
+  grid-area: image;
+}
+
+#sun-info {
+  grid-area: sun-info;
+}
+
+#air-info {
+  grid-area: air-info;
+}
+
+#sky-info {
+  grid-area: sky-info;
+}
