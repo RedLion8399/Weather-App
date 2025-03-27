@@ -37,7 +37,7 @@ async function loadApiKey(): Promise<void> {
   }
 }
 interface CurrentWeather {
-  weather: [{ main: string; description: string; icon: string }];
+  weather: [{ main: string; id: number; description: string; icon: string }];
 
   main: {
     temp: number;
