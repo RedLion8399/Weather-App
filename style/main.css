@@ -87,8 +87,13 @@ header {
 #sky-info {
   grid-area: sky-info;
 }
+
 #location-display {
   font-size: 1.3em;
+}
+
+#clothing-recommendation {
+  grid-area: clothing;
 }
 
 /* Styling for the location list */
