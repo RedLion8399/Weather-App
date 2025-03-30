@@ -103,6 +103,7 @@ function displayClothingRecommendation(currentWeatherData) {
         const shorts = document.createElement("img");
         shorts.src = "img/clothing-recommendations/Kurze-sommerhose.png";
         shorts.alt = "kurze Sommerhose";
+        shorts.classList.add("cloth-down");
         clothingSpace.appendChild(shorts);
     }
     else if (800 <= id && id <= 804 && 15 <= temp && temp <= 30) {
@@ -110,6 +111,7 @@ function displayClothingRecommendation(currentWeatherData) {
         const longpants = document.createElement("img");
         longpants.src = "img/clothing-recommendations/Sommerhose.png";
         longpants.alt = "lange Hose";
+        longpants.classList.add("cloth-down");
         clothingSpace.appendChild(longpants);
     }
     else {
@@ -117,6 +119,7 @@ function displayClothingRecommendation(currentWeatherData) {
         const jeans = document.createElement("img");
         jeans.src = "img/clothing-recommendations/Jeans.png";
         jeans.alt = "Jeans";
+        jeans.classList.add("cloth-down");
         clothingSpace.appendChild(jeans);
     }
 }

@@ -94,14 +94,18 @@ header {
 
 #clothing-recommendation {
   grid-area: clothing;
-  width: 100%;
+  width: 35%;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
 #clothing-recommendation img {
-  width: 35%;
+  width: 100%;
+}
+
+.cloth-down {
+  width: 85% !important;
 }
 
 /* Styling for the location list */

@@ -163,18 +163,21 @@ function displayClothingRecommendation(
     const shorts: HTMLImageElement = document.createElement("img");
     shorts.src = "img/clothing-recommendations/Kurze-sommerhose.png";
     shorts.alt = "kurze Sommerhose";
+    shorts.classList.add("cloth-down");
     clothingSpace.appendChild(shorts);
   } else if (800 <= id && id <= 804 && 15 <= temp && temp <= 30) {
     // lange Hose
     const longpants: HTMLImageElement = document.createElement("img");
     longpants.src = "img/clothing-recommendations/Sommerhose.png";
     longpants.alt = "lange Hose";
+    longpants.classList.add("cloth-down");
     clothingSpace.appendChild(longpants);
   } else {
     // Jeans
     const jeans: HTMLImageElement = document.createElement("img");
     jeans.src = "img/clothing-recommendations/Jeans.png";
     jeans.alt = "Jeans";
+    jeans.classList.add("cloth-down");
     clothingSpace.appendChild(jeans);
   }
 }
