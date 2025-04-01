@@ -161,6 +161,7 @@ function displayWeather(currentWeatherData, forecastWeatherData) {
         minute: "2-digit",
         timeZone: "UTC",
     });
+    document.getElementById("clouds").textContent = Math.round(currentWeatherData.clouds.all || 0).toString();
     displayClothingRecommendation(currentWeatherData);
 }
 function buildWeatherRequestUrl() {
