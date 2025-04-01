@@ -254,6 +254,12 @@ function displayWeather(
     minute: "2-digit",
     timeZone: "UTC",
   });
+  document.getElementById("rain")!.textContent = Math.round(
+    currentWeatherData.rain["1h"] || 0
+  ).toString();
+  document.getElementById("clouds")!.textContent = Math.round(
+    currentWeatherData.clouds.all || 0
+  ).toString();
 
   displayClothingRecommendation(currentWeatherData);
 }
