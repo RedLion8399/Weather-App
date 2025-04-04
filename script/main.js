@@ -14,6 +14,7 @@ const weatherDisplay = document.getElementById("weather-display");
 const locationDisplay = document.getElementById("location-display");
 const locationTemplate = document.getElementById("location-template");
 const cityInput = document.getElementById("city-input");
+const clothingSpace = document.getElementById("clothing-recommendation");
 // Get API Keys
 function loadApiKey() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -35,12 +36,110 @@ function loadApiKey() {
     });
 }
 // Get and process Weather Data
+function displayClothingRecommendation(currentWeatherData) {
+    clothingSpace.innerHTML = "";
+    let temp = Math.round(currentWeatherData.main.temp);
+    let id = currentWeatherData.weather[0].id;
+    let windspeed = Math.round(currentWeatherData.wind.speed);
+    // Optional fields
+    if (300 <= id && id < 600 && windspeed < 19) {
+        // Regenschirm
+        const umbrella = document.createElement("img");
+        umbrella.src = "img/clothing-recommendations/Regenschirm.png";
+        umbrella.alt = "Regenschirm";
+        clothingSpace.appendChild(umbrella);
+    }
+    if ((id === 800 || id === 801) && temp >= 20) {
+        // Sonnenhut
+        const sunhat = document.createElement("img");
+        sunhat.src = "img/clothing-recommendations/Sommerhut.png";
+        sunhat.alt = "Sonnenhut";
+        clothingSpace.appendChild(sunhat);
+    }
+    // Clothing up non-optional
+    if (800 <= id && id <= 804 && temp >= 20) {
+        // T-Shirt
+        const TShirt = document.createElement("img");
+        TShirt.src = "img/clothing-recommendations/T-Shirt.png";
+        TShirt.alt = "T-Shirt";
+        clothingSpace.appendChild(TShirt);
+    }
+    else if (800 <= id && id <= 804 && temp <= 20 && windspeed > 7) {
+        // Herbstjacke
+        const jacket = document.createElement("img");
+        jacket.src = "img/clothing-recommendations/Herbstjacke.png";
+        jacket.alt = "Herbstjacke";
+        clothingSpace.appendChild(jacket);
+    }
+    else if (200 <= id && id < 600 && temp <= 20) {
+        // Regenjacke
+        const rainjacket = document.createElement("img");
+        rainjacket.src = "img/clothing-recommendations/Regenjacke.png";
+        rainjacket.alt = "Regenjacke";
+        clothingSpace.appendChild(rainjacket);
+    }
+    else if (temp <= 0) {
+        // Anorak
+        const anorak = document.createElement("img");
+        anorak.src = "img/clothing-recommendations/Anorak.png";
+        anorak.alt = "Anorak";
+        clothingSpace.appendChild(anorak);
+    }
+    else if (800 <= id && id <= 804 && 0 < temp && temp < 20 && windspeed < 8) {
+        // Pullover
+        const pullover = document.createElement("img");
+        pullover.src = "img/clothing-recommendations/Pullover.png";
+        pullover.alt = "Pullover";
+        clothingSpace.appendChild(pullover);
+    }
+    else {
+        const error = document.createElement("img");
+        error.alt = "go naked";
+        clothingSpace.appendChild(error);
+    }
+    // Clothing down non-optional
+    if (800 <= id && id <= 804 && temp >= 25 && windspeed <= 7) {
+        // kurze Sommerhose
+        const shorts = document.createElement("img");
+        shorts.src = "img/clothing-recommendations/Kurze-sommerhose.png";
+        shorts.alt = "kurze Sommerhose";
+        shorts.classList.add("cloth-down");
+        clothingSpace.appendChild(shorts);
+    }
+    else if (800 <= id && id <= 804 && 15 <= temp && temp <= 30) {
+        // lange Hose
+        const longpants = document.createElement("img");
+        longpants.src = "img/clothing-recommendations/Sommerhose.png";
+        longpants.alt = "lange Hose";
+        longpants.classList.add("cloth-down");
+        clothingSpace.appendChild(longpants);
+    }
+    else {
+        // Jeans
+        const jeans = document.createElement("img");
+        jeans.src = "img/clothing-recommendations/Jeans.png";
+        jeans.alt = "Jeans";
+        jeans.classList.add("cloth-down");
+        clothingSpace.appendChild(jeans);
+    }
+}
 function displayWeather(currentWeatherData, forecastWeatherData) {
-    document.getElementById("name").textContent = currentWeatherData.name;
-    document.getElementById("description").textContent =
-        currentWeatherData.weather[0].description;
+    document.getElementById("city-name").textContent = currentWeatherData.name;
     document.getElementById("country").textContent =
         currentWeatherData.sys.country;
+    document.getElementById("time").textContent = new Date((currentWeatherData.dt + currentWeatherData.timezone) * 1000).toLocaleTimeString("de-DE", {
+        hour: "2-digit",
+        minute: "2-digit",
+        timeZone: "UTC",
+    });
+    document.getElementById("date").textContent = new Date((currentWeatherData.dt + currentWeatherData.timezone) * 1000).toLocaleDateString("de-DE", {
+        weekday: "long",
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+    });
+    document.getElementById("description").textContent =
+        currentWeatherData.weather[0].description;
     document.getElementById("icon").src = `https://openweathermap.org/img/wn/${currentWeatherData.weather[0].icon}@2x.png`;
     document.getElementById("temp").textContent = Math.round(currentWeatherData.main.temp).toString();
     document.getElementById("feels-like").textContent = Math.round(currentWeatherData.main.feels_like).toString();
@@ -62,6 +161,8 @@ function displayWeather(currentWeatherData, forecastWeatherData) {
         minute: "2-digit",
         timeZone: "UTC",
     });
+    document.getElementById("clouds").textContent = Math.round(currentWeatherData.clouds.all || 0).toString();
+    displayClothingRecommendation(currentWeatherData);
 }
 function buildWeatherRequestUrl() {
     return __awaiter(this, arguments, void 0, function* (lat = 51.44488, lon = 8.34851, current = true) {
