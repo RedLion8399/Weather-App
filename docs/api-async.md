@@ -1,7 +1,6 @@
 ---
 marp: true
 theme: uncover
-class: invert
 paginate: true
 style: |
     .api-call {
@@ -12,8 +11,9 @@ style: |
 ---
 
 <!-- _paginate: false -->
+<!-- _class: invert -->
 
-# Wie bekommt man Daten aus dem Internet?
+# Wie bekommt man <br> Daten aus dem Internet? <!-- fit -->
 
 <!-- - Problem: Wetteradten sind nicht bei uns, sondern auf Servern im Internet
 - Rhetorische Frage -->
@@ -35,6 +35,9 @@ style: |
 
 ---
 
+<!-- _class: invert -->
+
+
 ## Lösung - _API_
 
 ### **API  = _Application Programming Interface_**
@@ -51,6 +54,9 @@ Beispiel: Abfrage Uhrzeit
 -->
 
 ---
+
+<!-- _class: invert -->
+
 
 ## Request  & Response
 
@@ -73,3 +79,21 @@ let data = await fetch("https://qapi.vercel.app/api/random");
 <img src="img/Exemple-api-call.png" alt="API Call"  class="api-call">
 
 ---
+
+<!-- _class: invert -->
+
+
+# Wir programmiere <br> _Back to the Future_    <!-- fit -->
+
+Problem: API-Anfragen sind sehr zeitintensiv
+
+<!-- - Witz über langsames Internet
+- Mögliche Übertragungsfehler -->
+
+---
+
+![](https://mermaid.ink/svg/pako:eNpdU9uK2zAQ_RWhJwfsENtxLqYshKbQhW4JWdqHXS9Fice2qC25upBtQvLt1cVJw9pgzfjMnJkzkk54z0vAOa5aftg3RCj0bVswZJ5nZbzgdSN4LUjXIWl9UG8jD39hJQSvK3YEWgNDJQi0JgrYFX9kvVbBd62OBqnpTnkYAWVDxDOwMrCfIX21eYy28EeDVCbCx2xB9pxJCFZMHbjpjujKBg4UG-B7kDL4CYKIHVB1pfLRNxqpdFX9ioMCrymrAdEOXXWRXWs5g69E9yp6MRwtUKlgVODRfXJikp-gMSotwwcwNaDpldQUhGnBEn7aiQf0Q4KI3CRkiEDtxy7Pv1Y5QlH0cBPpvUGTs-2QXaydvYcdm7McgTUGdXd2cmenlgDe-5ZQFqwpoP8akexJa_YUSbpvXNfUbRAgN40hSJsy7mdPiCAttJ4CdsDMlLyOy-WChho4xLWgJc4r0koIcQeiI9bHJzuyAqsGOjPA3JglVES3qsChh1rOf3ukIaxcC3JgBS7Y2XD2hL1w3uFcCW1YBdd1c3V0X5qztabE7uitsLBHS3zmmimcJ_PF1JHg_ITfcR5l03ScLOJ4Hi-zxSRLliH-i_PFdJwmcRZPZkkaL2dZeg7x0ZWNx9NsOpsk83iRZqlZshBDSRUXT_4GuYt0_gc3jBPm)
+
+---
+
+<!-- _class: invert -->
