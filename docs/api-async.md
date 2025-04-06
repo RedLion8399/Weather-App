@@ -5,7 +5,7 @@ class: invert
 paginate: true
 style: |
     .api-call {
-        width: 90%;
+        width: 75%;
         height: auto;   
     }
 
@@ -67,6 +67,8 @@ let data = await fetch("https://qapi.vercel.app/api/random");
 ```
 
 ---
+
+### **JSON = _JavaScript Object Notation_**
 
 <img src="img/Exemple-api-call.png" alt="API Call"  class="api-call">
 
