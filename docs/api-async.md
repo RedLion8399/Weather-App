@@ -130,3 +130,23 @@ async function displayQuote() {
   console.log(quoteText);
 }
 ```
+
+---
+
+<!-- _class: invert -->
+<!-- _paginate: false -->
+
+## 🧠 Zusammenfassung
+
+- 📡 Daten kommen **nicht vom Gerät**, sondern von **Servern im Internet**
+- 🔄 Dafür nutzen wir **APIs**  
+  → senden Anfragen, bekommen Antworten (meist in **JSON**)
+
+---
+
+<!-- _class: invert -->
+<!-- _paginate: false -->
+
+- ⏱️ Diese Prozesse dauern – deshalb sind sie **asynchron**
+- 🧵 Der Code läuft **weiter**, während auf die Antwort gewartet wird
+- ✨ Mit `async` / `await` ist das einfacher zu schreiben & zu lesen
