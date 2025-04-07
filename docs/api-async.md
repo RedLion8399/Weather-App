@@ -94,3 +94,39 @@ Problem: API-Anfragen sind sehr zeitintensiv
 ---
 
 <!-- _class: invert -->
+
+## Asyncronität
+
+**async** und **await** ermöglicehn es auf asyncrone Prozesse zu "warten"
+
+---
+
+<!-- _class: invert -->
+
+## Kompliziert
+
+```ts
+fetch("https://qapi.vercel.app/api/random")
+.then((data: Response) => data.json())
+.then((quote: JSON) => console.log(quote.stringify()));
+
+.error((err: Error) => console.log(err));
+```
+
+---
+
+<!-- _class: invert -->
+
+## Einfacher
+
+Asynchrone Funktion
+
+```ts
+async function displayQuote() {
+  let data = await fetch("https://qapi.vercel.app/api/random");
+  let quote = await data.json();
+  let quoteText = quote.stringify();
+
+  console.log(quoteText);
+}
+```
