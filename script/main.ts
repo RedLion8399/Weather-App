@@ -100,7 +100,7 @@ function displayClothingRecommendation(
   currentWeatherData: CurrentWeather
 ): void {
   clothingSpace.innerHTML = "";
-  let temp: number = Math.round(currentWeatherData.main.temp);
+  let temp: number = Math.round(currentWeatherData.main.feels_like);
   let id: number = currentWeatherData.weather[0].id;
   let windspeed: number = Math.round(currentWeatherData.wind.speed);
 
@@ -127,7 +127,7 @@ function displayClothingRecommendation(
     rainjacket.src = "img/clothing-recommendations/Regenjacke.png";
     rainjacket.alt = "Regenjacke";
     clothingSpace.appendChild(rainjacket);
-  } else if (temp <= 0) {
+  } else if (temp <= 10) {
     // Anorak
     const anorak: HTMLImageElement = document.createElement("img");
     anorak.src = "img/clothing-recommendations/Anorak.png";

@@ -38,7 +38,7 @@ function loadApiKey() {
 // Get and process Weather Data
 function displayClothingRecommendation(currentWeatherData) {
     clothingSpace.innerHTML = "";
-    let temp = Math.round(currentWeatherData.main.temp);
+    let temp = Math.round(currentWeatherData.main.feels_like);
     let id = currentWeatherData.weather[0].id;
     let windspeed = Math.round(currentWeatherData.wind.speed);
     // Optional fields
@@ -64,7 +64,7 @@ function displayClothingRecommendation(currentWeatherData) {
         rainjacket.alt = "Regenjacke";
         clothingSpace.appendChild(rainjacket);
     }
-    else if (temp <= 0) {
+    else if (temp <= 10) {
         // Anorak
         const anorak = document.createElement("img");
         anorak.src = "img/clothing-recommendations/Anorak.png";
