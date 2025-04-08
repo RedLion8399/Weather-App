@@ -133,4 +133,4 @@ font-size: 20px;
 
 ## So kann dieses Layout erzeugt werden:
 
-![Bild website](./img-presentation/Grid-layout.jpeg)
+![Bild website](img/Grid-layout.jpeg)
