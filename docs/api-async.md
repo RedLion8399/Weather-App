@@ -80,7 +80,7 @@ let data = await fetch("https://qapi.vercel.app/api/random");
 
 <!-- _class: invert -->
 
-# Wir programmiere <br> _Back to the Future_    <!-- fit -->
+# Wir programmieren <br> _Back to the Future_    <!-- fit -->
 
 Problem: API-Anfragen sind sehr zeitintensiv
 
