@@ -6,6 +6,60 @@
     <link rel="stylesheet" href="style/main.css" />
     <title>Weather App</title>
   </head>
-  <body></body>
-  <script src="script/main.js"></script>
+  <body>
+    <header>
+      <div>
+        <span id="city-name"></span>,
+        <span id="country"></span>
+      </div>
+      <span id="date"></span>
+      <span id="time"></span>
+    </header>
+
+    <div id="city-search">
+      <form id="city-input">
+        <input type="text" name="city" id="city" placeholder="Warstein" />
+
+        <button type="submit">Submit</button>
+      </form>
+      <div id="location-display"></div>
+    </div>
+
+    <div id="weather-display">
+      <div>Wetter: <span id="description"></span></div>
+      <div><img src="" alt="Pictogram of the weather" id="icon" /></div>
+
+      <div>Temparatur: <span id="temp"></span> °C</div>
+      <div>Gefühlte Temperatur: <span id="feels-like"></span> °C</div>
+
+      <div id="temperature-min-max">
+        <div>Mindesttemparatur: <span id="temp-min"></span> °C</div>
+        <div>Maximale Temperatur: <span id="temp-max"></span> °C</div>
+      </div>
+      <div id="air-info">
+        <div>Luftdruck: <span id="pressure"></span> hPa</div>
+        <div>Luftfeuchtigkeit: <span id="humidity"></span> %</div>
+        <div>Sichtweite: <span id="visibility"></span> m</div>
+      </div>
+
+      <div id="sky-info">
+        <div>Windgeschwindigkeit: <span id="wind-speed"></span> m/s</div>
+        <div>Windrichtung: <span id="wind-deg"></span> °</div>
+        <div>Böen-Geschwindigkeit: <span id="wind-gust"></span> m/s</div>
+        <div>Wolkenbedeckung: <span id="clouds"></span> %</div>
+      </div>
+
+      <div id="sun-info">
+        <div>Sonneaufgang: <span id="sunrise"></span></div>
+        <div>Sonnenuntergang: <span id="sunset"></span></div>
+      </div>
+      <div id="clothing-recommendation"></div>
+    </div>
+
+    <template id="location-template">
+      <div class="location-card"></div>
+    </template>
+
+    <script src="script/main.js" defer></script>
+  </body>
 </html>
