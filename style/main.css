@@ -74,6 +74,11 @@ header {
 
 #weather-display div:has(#icon) {
   grid-area: image;
+  width: 30%;
+}
+
+#icon {
+  width: 100%;
 }
 
 #sun-info {
