@@ -91,6 +91,7 @@ Das CSS-Grid-Layout wird durch den Zugriff auf die ID innerhalb des **weather-di
 ```css
 #weather-display {
   display: grid;
+}
 ```
 
 Es sorgt dafür, dass die Wetteranzeige eine klare Struktur hat. Die einzelnen Bereiche sind wie folgt zugeordnet:
