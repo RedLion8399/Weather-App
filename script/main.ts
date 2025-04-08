@@ -100,7 +100,7 @@ function displayClothingRecommendation(
   currentWeatherData: CurrentWeather
 ): void {
   clothingSpace.innerHTML = "";
-  let temp: number = Math.round(currentWeatherData.main.temp);
+  let temp: number = Math.round(currentWeatherData.main.feels_like);
   let id: number = currentWeatherData.weather[0].id;
   let windspeed: number = Math.round(currentWeatherData.wind.speed);
 
@@ -121,31 +121,31 @@ function displayClothingRecommendation(
   }
 
   // Clothing up non-optional
-  if (800 <= id && id <= 804 && temp >= 20) {
-    // T-Shirt
-    const TShirt: HTMLImageElement = document.createElement("img");
-    TShirt.src = "img/clothing-recommendations/T-Shirt.png";
-    TShirt.alt = "T-Shirt";
-    clothingSpace.appendChild(TShirt);
-  } else if (800 <= id && id <= 804 && temp <= 20 && windspeed > 7) {
-    // Herbstjacke
-    const jacket: HTMLImageElement = document.createElement("img");
-    jacket.src = "img/clothing-recommendations/Herbstjacke.png";
-    jacket.alt = "Herbstjacke";
-    clothingSpace.appendChild(jacket);
-  } else if (200 <= id && id < 600 && temp <= 20) {
+  if (200 <= id && id < 600) {
     // Regenjacke
     const rainjacket: HTMLImageElement = document.createElement("img");
     rainjacket.src = "img/clothing-recommendations/Regenjacke.png";
     rainjacket.alt = "Regenjacke";
     clothingSpace.appendChild(rainjacket);
-  } else if (temp <= 0) {
+  } else if (temp <= 10) {
     // Anorak
     const anorak: HTMLImageElement = document.createElement("img");
     anorak.src = "img/clothing-recommendations/Anorak.png";
     anorak.alt = "Anorak";
     clothingSpace.appendChild(anorak);
-  } else if (800 <= id && id <= 804 && 0 < temp && temp < 20 && windspeed < 8) {
+  } else if (temp >= 20) {
+    // T-Shirt
+    const TShirt: HTMLImageElement = document.createElement("img");
+    TShirt.src = "img/clothing-recommendations/T-Shirt.png";
+    TShirt.alt = "T-Shirt";
+    clothingSpace.appendChild(TShirt);
+  } else if (windspeed > 7) {
+    // Herbstjacke
+    const jacket: HTMLImageElement = document.createElement("img");
+    jacket.src = "img/clothing-recommendations/Herbstjacke.png";
+    jacket.alt = "Herbstjacke";
+    clothingSpace.appendChild(jacket);
+  } else if (windspeed <= 7) {
     // Pullover
     const pullover: HTMLImageElement = document.createElement("img");
     pullover.src = "img/clothing-recommendations/Pullover.png";
